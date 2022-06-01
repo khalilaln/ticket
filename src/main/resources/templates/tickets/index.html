@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title>
+LISTE DES TICKETS</title>
+
+    <th:block th:insert="parts/headfiles :: copy"/>
+
+
+</head>
+<style>
+ body {
+	
+	background-color: rgb(143, 68, 46);
+	color: green;
+}
+
+
+</style>
+
+
+<!-- Start wrapper-->
+<div id="wrapper">
+
+    <!--Start sidebar-wrapper-->
+    <th:block th:insert="parts/sidebar :: copy"></th:block>
+
+    <!--End sidebar-wrapper-->
+
+    <!--Start topbar header-->
+    <th:block th:insert="parts/header :: copy"></th:block>
+    <!--End topbar header-->
+
+    <div class="clearfix"></div>
+
+    <div class="content-wrapper">
+        <div class="container-fluid">
+
+            <!--Start Dashboard Content-->
+
+
+            <div class="row">
+                <div class="col-12 col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Tickets
+                            <div class="card-action">
+                                <div class="dropdown" sec:authorize="hasAuthority('Role_Client')">
+                                    <a href="javascript:void();" class="dropdown-toggle dropdown-toggle-nocaret"
+                                       data-toggle="dropdown">
+                                        <i class="icon-options"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="/tickets/ajouter"
+                                           >Ajouter</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="mt-2 mb-2 ml-2" th:if="${searchtext}" th:text="${searchtext}"></p>
+                        <div class="table-responsive">
+                            <table class="table align-items-center table-flush table-borderless" style="font-size: 11px">
+                                <thead>
+                                <tr>
+                                    <td>Id</td>
+                                    <td>Titre</td>
+                                    <td>Description</td>
+                                    <td>Environnement</td>
+                                    <td>Logiciel</td>
+                                    <td>Urgence</td>
+                                    <td>Etat</td>
+                                    <td>Client</td>
+                                    <td>Developeur</td>
+                                    <td>Action</td>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="dat : ${data}">
+                                    <td th:text="${dat.id}"></td>
+                                    <td th:text="${dat.name}"></td>
+                                    <td th:text="${dat.description}"></td>
+                                    <td th:text="${dat.environnement}"></td>
+                                    <td th:text="${dat.logiciel}"></td>
+                                    <td>
+                                        <div class="progress shadow" style="height: 3px;">
+                                            <div th:if="${dat.urgence=='critique'}" class="progress-bar text-danger"
+                                                 role="progressbar" style="width: 100%;"></div>
+                                            <div th:if="${dat.urgence=='urgent'}" class="progress-bar text-warning"
+                                                 role="progressbar" style="width: 80%;"></div>
+                                            <div th:if="${dat.urgence=='normal'}" class="progress-bar text-primary"
+                                                 role="progressbar" style="width: 40%;"></div>
+                                            <div th:if="${dat.urgence=='non urgent'}" class="progress-bar"
+                                                 role="progressbar" style="width: 10%;"></div>
+
+                                        </div>
+                                    </td>
+
+
+                                    <td>
+                                        <div sec:authorize="hasAuthority('Role_Développeur')">
+                                        <span th:if="${dat.etat=='en cours'}" 
+                                              th:classappend="${'readfield'+dat.id} ">en cours</span>
+
+                                            <span th:if="${dat.etat=='terminer'}" 
+                                                  th:classappend="${'readfield'+dat.id}">terminer</span>
+                                        </div>
+                                        <div sec:authorize="!hasAuthority('Role_Développeur')">
+                                        <span th:if="${dat.etat=='en cours'}" 
+                                              >en cours</span>
+
+                                            <span th:if="${dat.etat=='terminer'}" 
+                                                  >terminer</span>
+                                        </div>
+                                        <select class="form-control form-control-sm editfield"
+                                                sec:authorize="hasAuthority('Role_Développeur')"
+                                                th:classappend="${'editfield'+dat.id}" targetfield="etat"
+                                                th:targetid="${dat.id}" style="display: none">
+                                            <option value="en cours" th:selected="${dat.etat eq 'en cours'}">
+                                                en cours
+                                            </option>
+                                            <option value="terminer" th:selected="${dat.etat eq 'terminer'}">terminer</option>
+                                        </select>
+                                    </td>
+                                    <!--                                    <td th:text="${dat.client.username}"></td>-->
+                                    <!--                                    <td th:text="${dat.developeur.username}"></td>-->
+                                    <td>
+                                        <span th:if="${dat.client}!=null" th:text="${dat.client.username}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${dat.developeur}!=null" th:classappend="${'readfield'+dat.id}"
+                                              sec:authorize="hasAuthority('Role_Administrateur')"
+                                              th:text="${dat.developeur.username}"></span>
+
+                                        <span th:if="${dat.developeur}!=null"
+                                              sec:authorize="!hasAuthority('Role_Administrateur')"
+                                              th:text="${dat.developeur.username}"></span>
+
+                                        <select th:each="dev : ${devs}" class="form-control form-control-sm editfield"
+                                                th:classappend="${'editfield'+dat.id}" targetfield="developer"
+                                                th:targetid="${dat.id}" style="display: none" sec:authorize="hasAuthority('Role_Administrateur')">
+                                            <option></option>
+
+                                            <option th:value="${dev.id}" th:text="${dev.username}"
+                                                    th:selected="${dat.developeur ne null && dat.developeur.id eq dev.id }"></option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <a href="javascript:void();" class="dropdown-toggle dropdown-toggle-nocaret"
+                                               data-toggle="dropdown">
+                                                <i class="icon-options"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right" >
+                                                <span class="dropdown-item deletebutton" th:target="${dat.id}"
+                                                      style="cursor: pointer" sec:authorize="hasAuthority('Role_Administrateur')">Supprimer</span>
+                                                <span class="dropdown-item editbutton"
+                                                      th:target="${dat.id}">Modifier</span>
+
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div><!--End Row-->
+
+            <!--End Dashboard Content-->
+
+            <!--start overlay-->
+            <div class="overlay toggle-menu"></div>
+            <!--end overlay-->
+
+        </div>
+        <!-- End container-fluid-->
+
+    </div><!--End content-wrapper-->
+    <!--Start Back To Top Button-->
+    <a href="javaScript:void();" class="back-to-top"><i class="fa fa-angle-double-up"></i> </a>
+    <!--End Back To Top Button-->
+
+    <!--Start footer-->
+
+    <th:block th:insert="parts/footer :: copy"></th:block>
+
+    <!--End footer-->
+
+   
+
+</div><!--End wrapper-->
+
+<div th:insert="parts/bottomfiles :: copy"></div>
+<div class="modal fade" id="response-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-theme bg-theme1">
+            <div class="modal-header border-0 pb-0 mb-0">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="/tickets/supprimer" class="modal-body deleteform">
+                <div class="d-flex align-items-center ">
+                    <p class="mb-0 ml-3 " id="response-text" style="font-size: 20px"></p>
+                </div>
+                <button class="btn btn-light mt-4 deletebutonfinal" style="display: none">Supprimer</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.deletebutton').click(function () {
+            $('.deleteform').attr('action', '/tickets/supprimer/' + $(this).attr('target'))
+            $('#response-text').text("Vouler vous Supprimer ce ticket?")
+            $('.deletebutonfinal').show()
+            $('#response-modal').modal('show')
+        })
+
+
+        $('.editbutton').click(function () {
+            $('.editfield' + $(this).attr('target')).show()
+            $('.readfield' + $(this).attr('target')).hide()
+        })
+
+        $('.editfield').change(function () {
+            let id = $(this).attr('targetid')
+            let field = $(this).attr('targetfield')
+            let newvalue = $(this).val()
+            if (newvalue) {
+                $.ajax({
+                    url: "/tickets/modifier/" + id + "/" + field + "/" + newvalue,
+                    method: 'post',
+                    success: function (e) {
+                        $('#response-text').text(e)
+                        $('.deletebutonfinal').hide()
+                        $('#response-modal').modal('show')
+
+                    },
+                    error: function (e) {
+                        console.log(e)
+                    }
+                })
+            }
+        })
+    })
+</script>
+</body>
+</html>

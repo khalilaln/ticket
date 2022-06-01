@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashtreme Admin - Free Dashboard for Bootstrap 4 by Codervent</title>
+
+    <th:block th:insert="parts/headfiles :: copy"/>
+
+
+</head>
+
+<style>
+ body {
+	
+	background-color: red;
+	color: green;
+}
+
+
+</style>
+
+
+<!-- Start wrapper-->
+<div id="wrapper">
+
+    <!--Start sidebar-wrapper-->
+    <th:block th:insert="parts/sidebar :: copy"></th:block>
+
+    <!--End sidebar-wrapper-->
+
+    <!--Start topbar header-->
+    <th:block th:insert="parts/header :: copy"></th:block>
+    <!--End topbar header-->
+
+    <div class="clearfix"></div>
+
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">Ajouter un ticket</div>
+                    <hr>
+                    <form class="row" th:action="@{/tickets/ajouter}" th:object="${data}" method="post">
+                        <div class="col-md-6 mb-3">
+                            <label th:for="*{name}">Titre</label>
+                            <input type="text" class="form-control" th:field="*{name}" th:id="*{name}" >
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label th:for="*{description}">Description</label>
+                            <input type="text" class="form-control" th:field="*{description}" th:id="*{description}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label th:for="*{environnement}">Environement</label>
+                            <input type="text" class="form-control" th:field="*{environnement}" th:id="*{environnement}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label th:for="*{logiciel}">Logiciel</label>
+                            <select class="form-control" th:field="*{logiciel}" th:id="*{logiciel}">
+                                <option value="Logiciel 1">Logiciel 1</option>
+                                <option value="Logiciel 2">Logiciel 2</option>
+                                <option value="Logiciel 3">Logiciel 3</option>
+                                <option value="Logiciel 4">Logiciel 4</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-5">
+                            <label th:for="*{urgence}">Urgence</label>
+                            <select class="form-control" th:field="*{urgence}" th:id="*{urgence}">
+                                <option value="faible">faible</option>
+                                <option value="normal">normal</option>
+                                <option value="fort">fort</option>
+                                <option value="urgent">urgent</option>
+                                
+                            </select>
+                        </div>
+                        <div class="col-md-12 ">
+                            <button type="submit" class="btn btn-light px-5"><i class="icon-plus"></i> Ajouter
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!--End Dashboard Content-->
+            <!--start overlay-->
+            <div class="overlay toggle-menu"></div>
+            <!--end overlay-->
+
+        </div>
+        <!-- End container-fluid-->
+
+    </div><!--End content-wrapper-->
+    <!--Start Back To Top Button-->
+    <a href="javaScript:void();" class="back-to-top"><i class="fa fa-angle-double-up"></i> </a>
+    <!--End Back To Top Button-->
+
+    <!--Start footer-->
+
+    <th:block th:insert="parts/footer :: copy"></th:block>
+
+    <!--End footer-->
+
+  
+</div><!--End wrapper-->
+
+<div th:insert="parts/bottomfiles :: copy"></div>
+
+
+</body>
+</html>
